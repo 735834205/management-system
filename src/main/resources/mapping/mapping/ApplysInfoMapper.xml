@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//maybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.java.mapper.ApplysInfoMapper">
+	
+	<select id="getMyApplysInfos" resultType="Map" parameterType="Long">
+		SELECT 
+		applys.`id` AS id,applys.`parts_id` AS parts_id,
+		applys.`reason` AS reason,applys.`state` AS state,
+		applys.`user_id` AS user_id,applys.`other` AS other,
+		applys.`approval` AS approval
+		FROM applys INNER JOIN parts ON parts.id=applys.`parts_id` 
+		WHERE parts.`ifexist`=1 AND applys.`user_id`=#{userid}
+	</select>
+	
+	<select id="getAllApplysInfos" resultType="Map">
+	SELECT applys.* 
+	FROM applys INNER JOIN parts ON parts.`id`=applys.`parts_id`
+	WHERE parts.`ifexist`=TRUE AND applys.`approval`=FALSE
+	</select>
+	
+</mapper>

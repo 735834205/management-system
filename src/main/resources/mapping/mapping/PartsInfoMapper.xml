@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//maybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.java.mapper.PartsInfoMapper">
+
+	<!-- 查询空闲零部件信息 -->
+	<select id="getAllFreePartsInfos" resultType="Map">
+		SELECT id,kind,checkdate FROM parts WHERE state=0 AND ifexist=true
+	</select>
+	
+	<select id="getAllPartsInfos" resultType="Map">
+		SELECT * FROM parts WHERE ifexist=true
+	</select>
+	
+	<select id="getAllPartsInfoByCondition" resultType="Map" parameterType="String">
+		SELECT * FROM parts WHERE ifexist=true
+		<if test="type==1">AND state=#{keyword}</if>
+		<if test="type==2">AND user_id=#{keyword}</if>
+		<if test="type==3">AND id=#{keyword}</if>
+	</select>
+	
+	
+	<select id="getCheckPartsInfo" resultType="Map">
+		SELECT * FROM parts WHERE ifexist=TRUE AND 
+		TIMESTAMPDIFF(DAY,checkdate,CURRENT_DATE)>10
+	</select>
+	
+	<select id="getHistoryParts" resultType="Map">
+		SELECT history.*,parts.`kind` FROM history INNER JOIN parts ON history.`part_id`=parts.id WHERE parts.ifexist=TRUE
+	</select>
+	
+	<select id="getFreePartsByCondition" resultType="Map" parameterType="String">
+		SELECT * FROM parts WHERE ifexist=TRUE AND state=FALSE AND
+		<if test="type==1">id=#{keyword}</if>
+		<if test="type==2">kind LIKE '%${keyword}%'</if>
+	</select>
+	
+	<!-- <select id="batchReturn1" resultType="Integer">
+		INSERT INTO history(part_id,starttime,endtime,user_id) VALUES(
+		#{part_id},(SELECT usetime FROM parts WHERE id=#{part_id}),
+		CURRENT_DATE,(SELECT user_id FROM parts WHERE id=#{part_id})
+		)
+	</select> -->
+	
+</mapper>
